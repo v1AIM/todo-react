@@ -1,39 +1,16 @@
-import { useState } from "react";
-import { dummyData } from "./data/todos";
 import AddTodoForm from "./components/AddTodoForm";
 import TodoList from "./components/TodoList";
+import TodoSummary from "./components/TodoSummary";
+import useTodos from "./hooks/useTodos";
 
 function App() {
-  const [todos, setTodos] = useState(dummyData);
-
-  function setTodoCompleted(id: number, completed: boolean) {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => (todo.id === id ? { ...todo, completed } : todo))
-    );
-    // setTodos((prevTodos) =>
-    //   prevTodos.map((todo) => {
-    //     if (todo.id === id) {
-    //       return { ...todo, completed };
-    //     }
-    //     return todo;
-    //   })
-    // );
-  }
-
-  function addTodo(title: string) {
-    setTodos((prevTodos) => [
-      ...prevTodos,
-      {
-        id: prevTodos.length + 1,
-        title,
-        completed: false,
-      },
-    ]);
-  }
-
-  function deleteTodo(id: number) {
-    setTodos((prevTodos) => prevTodos.filter((todos) => todos.id !== id));
-  }
+  const {
+    todos,
+    setTodoCompleted,
+    addTodo,
+    deleteTodo,
+    deleteAllCompletedTodos,
+  } = useTodos();
 
   return (
     <main className="py-10  h-screen space-y-5 overflow-y-auto">
@@ -41,6 +18,7 @@ function App() {
       <div className="max-w-lg mx-auto bg-slate-100 rounded-md p-5 space-y-6">
         <AddTodoForm onSubmit={addTodo} />
         <TodoList
+          key={todos.length}
           todos={todos}
           onCompletedChange={setTodoCompleted}
           onDelete={deleteTodo}
@@ -49,6 +27,11 @@ function App() {
           // }
         />
       </div>
+      <TodoSummary
+        key={todos.length}
+        todos={todos}
+        deleteAllCompleted={deleteAllCompletedTodos}
+      />
     </main>
   );
 }
